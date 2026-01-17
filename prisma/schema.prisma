@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Users {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  group Group[]
+  groupMember GroupMember[]
+  messages Messages[]
+}
+
+model Group {
+  id String @id @default(uuid())
+  name String
+  creator String
+  createdAt DateTime @default(now())
+  groupMember GroupMember[]
+  user Users @relation(fields: [creator],references: [id],onDelete: Cascade)
+  messages Messages[]
+}
+
+
+model GroupMember {
+  id Int @id @default(autoincrement())
+  joinedAt DateTime
+  groupId String
+  group Group @relation(fields: [groupId],references: [id],onDelete: Cascade)
+  userId String
+  user Users @relation(fields:[userId],references: [id],onDelete: Cascade)
+
+
+  @@unique([groupId,userId])
+}
+
+
+model Messages{
+  id Int @id @default(autoincrement())
+  groupId String
+
+  group Group @relation(fields: [groupId],references: [id],onDelete: Cascade)
+  userId String
+  user Users? @relation(fields:[userId],references:[id])
+
+  content String
+  createdAt DateTime @default(now())
+}

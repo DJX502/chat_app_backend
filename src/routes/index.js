@@ -1,10 +1,14 @@
-const express = require("express")
-const authRoutes = require("./authRoutes")
-const router = express.Router()
+const express = require("express");
+const authRoutes = require("./authRoutes");
+const groupRoutes = require("./groupRoutes");
+const messageRoutes = require("./messageRoutes");
+const router = express.Router();
+//auth routes
+router.use("/auth", authRoutes);
+//group routes
+router.use("/group", groupRoutes);
 
-
-router.use("/auth",authRoutes);
-
-
+//message
+router.use("/messages", messageRoutes);
 
 module.exports = router;

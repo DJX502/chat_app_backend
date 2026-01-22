@@ -12,51 +12,54 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model Users {
-  id String @id @default(uuid())
-  name String
-  email String @unique
-  password String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  group Group[]
+  id          String        @id @default(uuid())
+  name        String
+  email       String        @unique
+  password    String
+  bio         String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  group       Group[]
   groupMember GroupMember[]
-  messages Messages[]
+  messages    Messages[]
 }
 
 model Group {
-  id String @id @default(uuid())
-  name String
-  creator String
-  createdAt DateTime @default(now())
+  id          String        @id @default(uuid())
+  name        String
+  creator     String
+  createdAt   DateTime      @default(now())
   groupMember GroupMember[]
-  user Users @relation(fields: [creator],references: [id],onDelete: Cascade)
-  messages Messages[]
+  role        Role          @default(user)
+  user        Users         @relation(fields: [creator], references: [id], onDelete: Cascade)
+  messages    Messages[]
 }
-
 
 model GroupMember {
-  id Int @id @default(autoincrement())
-  joinedAt DateTime
-  groupId String
-  group Group @relation(fields: [groupId],references: [id],onDelete: Cascade)
-  userId String
-  user Users @relation(fields:[userId],references: [id],onDelete: Cascade)
+  id       Int      @id @default(autoincrement())
+  joinedAt DateTime @default(now())
+  groupId  String
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId   String
+  user     Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-
-  @@unique([groupId,userId])
+  @@unique([groupId, userId])
 }
 
-
-model Messages{
-  id Int @id @default(autoincrement())
+model Messages {
+  id      Int    @id @default(autoincrement())
   groupId String
 
-  group Group @relation(fields: [groupId],references: [id],onDelete: Cascade)
+  group  Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   userId String
-  user Users? @relation(fields:[userId],references:[id])
+  user   Users? @relation(fields: [userId], references: [id])
 
-  content String
+  content   String
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  admin
+  user
 }

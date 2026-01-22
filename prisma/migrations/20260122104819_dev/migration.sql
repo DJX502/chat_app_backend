@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "GroupMember" ALTER COLUMN "joinedAt" SET DEFAULT CURRENT_TIMESTAMP;
